@@ -7,12 +7,17 @@ from PyQt4 import QtCore, QtGui
 from PyQt4.QtWebKit import *
 
 
+b = open("bookmarks.txt", "rb")
+bookmark = pickle.loads(b.read())
+print(b)
+b.close()
 
+url = ""
 
 class Window(QtGui.QMainWindow):
 
     def __init__(self):
-        global bookmarks
+        global bookmark
         super(Window, self).__init__()
         self.setGeometry(50,50, 1200, 800)
         self.setWindowTitle("Bowser")
@@ -82,7 +87,7 @@ class Window(QtGui.QMainWindow):
         self.list = QtGui.QComboBox(self)
         self.list.setMinimumSize(35,30)
 
-        for i in bookmarks:
+        for i in bookmark:
             self.list.addItem(i)
 
         self.list.activated[str].connect(self.handleBookmarks)
@@ -144,8 +149,8 @@ class Window(QtGui.QMainWindow):
 
         bookmarks.append(url)
 
-        b = open("bookmarks.txt","wb")
-        pickle.dump(bookmarks,b)
+        b = open("bookmarks.txt", "wb")
+        pickle.dump(bookmarks, b)
         b.close()
 
         self.list.addItem(url)
@@ -165,6 +170,30 @@ class Window(QtGui.QMainWindow):
 
     def close_application(self):
         sys.exit()
+
+    def handleBookmarks(self,choice):
+        global url
+
+        url = choice
+        self.line.setText(url)
+        self.Enter()
+
+    def Back(self):
+        self.web.back()
+
+    def Forward(self):
+        self.web.forward()
+
+    def Reload(self):
+        self.web.reload()
+
+    def UrlChanged(self):
+        self.line.setText(self.web.url().toString())
+
+    def LinkHovered(self,l):
+        self.status.showMessage(l)
+
+
 
 def run():
     app = QtGui.QApplication(sys.argv)
