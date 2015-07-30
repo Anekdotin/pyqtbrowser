@@ -1,50 +1,37 @@
-__author__ = 'ed'
-
 
 import sys, pickle
 
-from PyQt4 import QtCore, QtGui
+from PyQt4 import QtGui, QtCore
 from PyQt4.QtWebKit import *
 
 
-b = open("bookmarks.txt", "rb")
-bookmark = pickle.loads(b.read())
-print(b)
-b.close()
+
+
+# a = {1:"www.yahoo.com",2:"www.ebay.com"}
+#
+#
+# b = open("bookmarks.txt", "wb")
+# pickle.dump(a, b)
+# #bookmark = pickle.load(b)
+#
+# b.close()
+
+pickle_in = open("bookmarks.txt", "rb")
+bookmarks = pickle.load(pickle_in)
+print(bookmarks)
+print(bookmarks[2])
 
 url = ""
 
-class Window(QtGui.QMainWindow):
+class Main(QtGui.QMainWindow):
 
     def __init__(self):
-        global bookmark
-        super(Window, self).__init__()
-        self.setGeometry(50,50, 1200, 800)
-        self.setWindowTitle("Bowser")
-        self.setWindowIcon(QtGui.QIcon('mariologo.png'))
+        QtGui.QMainWindow.__init__(self)
+        self.initUI()
 
+    def initUI(self):
 
-        ##########actions#########
-
-        extraAction = QtGui.QAction("Exot me", self)
-        extraAction.setShortcut("Ctrl+Q")
-        extraAction.setStatusTip('Leave the program')
-        extraAction.triggered.connect(self.close_application)
-
-        self.statusBar()
-
-        mainMenu = self.menuBar()
-        fileMenu = mainMenu.addMenu('&File')
-        fileMenu.addAction(extraAction)
-
-
-        self.home()
-
-
-
-
-
-
+        global bookmarks
 
         self.centralwidget = QtGui.QWidget(self)
 
@@ -87,8 +74,8 @@ class Window(QtGui.QMainWindow):
         self.list = QtGui.QComboBox(self)
         self.list.setMinimumSize(35,30)
 
-        for i in bookmark:
-            self.list.addItem(i)
+        for i in bookmarks:
+            self.list.addItem(str(i))
 
         self.list.activated[str].connect(self.handleBookmarks)
         self.list.view().setSizePolicy(QtGui.QSizePolicy.Minimum,QtGui.QSizePolicy.Minimum)
@@ -109,6 +96,18 @@ class Window(QtGui.QMainWindow):
 
         self.centralwidget.setLayout(grid)
 
+#---------Window settings --------------------------------
+
+        self.setGeometry(50,50,1360,768)
+        self.setWindowTitle("PySurf")
+        self.setWindowIcon(QtGui.QIcon(""))
+        self.setStyleSheet("background-color:")
+
+        self.status = self.statusBar()
+        self.status.addPermanentWidget(self.pbar)
+        self.status.hide()
+
+        self.setCentralWidget(self.centralwidget)
 
     def Enter(self):
         global url
@@ -143,33 +142,19 @@ class Window(QtGui.QMainWindow):
             self.book.setText("☆")
 
         self.status.show()
+
     def Bookmark(self):
         global url
         global bookmarks
 
-        bookmarks.append(url)
+        #bookmarks.append(url)
 
-        b = open("bookmarks.txt", "wb")
-        pickle.dump(bookmarks, b)
+        b = open("bookmarks.txt","wb")
+        pickle.dump(bookmarks,b)
         b.close()
 
         self.list.addItem(url)
         self.book.setText("★")
-
-
-
-
-    def home(self):
-        btn = QtGui.QPushButton("Quit", self)
-        btn.clicked.connect(self.close_application)
-
-        btn.resize(btn.minimumSizeHint())
-        btn.move(0,100)
-
-        self.show()
-
-    def close_application(self):
-        sys.exit()
 
     def handleBookmarks(self,choice):
         global url
@@ -195,11 +180,12 @@ class Window(QtGui.QMainWindow):
 
 
 
-def run():
+def main():
     app = QtGui.QApplication(sys.argv)
-    GUI = Window()
+    main= Main()
+    main.show()
+
     sys.exit(app.exec_())
 
-run()
-
-
+if __name__ == "__main__":
+    main()
