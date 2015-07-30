@@ -1,6 +1,6 @@
 
 import sys, pickle
-
+from PyQt4.QtCore import QUrl
 from PyQt4 import QtGui, QtCore
 from PyQt4.QtWebKit import *
 
@@ -70,6 +70,7 @@ class Main(QtGui.QMainWindow):
 
         self.web = QWebView(loadProgress = self.pbar.setValue, loadFinished = self.pbar.hide, loadStarted = self.pbar.show, titleChanged = self.setWindowTitle)
         self.web.setMinimumSize(1360,700)
+        self.web.load(QUrl('http://www.google.com'))
 
         self.list = QtGui.QComboBox(self)
         self.list.setMinimumSize(35,30)
